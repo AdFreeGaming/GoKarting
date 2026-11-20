@@ -2,8 +2,7 @@
 
 A first-person hire-kart racing game that runs in the browser. You drive a 75 km/h kart around a 540 m circuit in Wollongong, Australia, under the rules of a 4-hour team endurance event: clockwise, consistent laps, no running off the track.
 
-<img width="850" height="841" alt="image" src="https://github.com/user-attachments/assets/cd307066-8012-4b2c-8e99-4de4c99acb27" />
-
+![Aerial view of the circuit](development_assets/Track/Track.png)
 
 ## Playing
 
@@ -36,6 +35,21 @@ Pick one of the two track configurations on the start screen:
 | `M` | Mute |
 | `P` | Autopilot demo |
 | `Shift` + `Enter` | Restart the session |
+
+## Phones and tablets
+
+Opening `index.html` on an iPhone, iPad or Android device redirects to `index_phone.html`, a touch version of the same game. Hold the device sideways (landscape). On the start menu choose a control option, the month and time of day, then tap a track to start.
+
+| Option | Steering | Accelerate / brake | Head |
+| --- | --- | --- | --- |
+| **Touch** | Pad on the left: drag the knob, or tap the arrows for full lock | Slider on the right: up to accelerate, down to brake | Fixed, looking ahead |
+| **Tilt (gyro)** | Turn the device like a steering wheel | Tilt the top away from you to accelerate, towards you to brake | Swing the device left or right to look that way |
+
+- **Menu** pauses and returns to the start menu, where **Back to race** resumes. **Restart** restarts the session on the same track; tap it twice to confirm.
+- In tilt mode, **Centre** resets the neutral position to how you are holding the device. The game also does this about a second after each start.
+- Tilt needs the page to be served over `https` (GitHub Pages is fine), and on an iPhone or iPad you must allow motion access when asked. If no sensor data arrives, the game switches to touch controls.
+- Saved sessions are not available in the phone version.
+- To use the keyboard version on a tablet, open `index.html?desktop`.
 
 ## Event rules
 
@@ -72,8 +86,10 @@ The sun is placed for Wollongong (34.43° S, 150.89° E) for the chosen month an
 
 | Path | Contents |
 | --- | --- |
-| `index.html` | Page markup, HUD and menu |
+| `index.html` | Desktop page: markup, HUD and menu |
+| `index_phone.html` | Phone and tablet page |
 | `css/style.css` | Styles |
+| `css/phone.css` | Extra styles for the phone layout and touch pads |
 | `js/config.js` | Constants (speed, track width, break-out times) |
 | `js/track.js` | Track layouts traced from the aerial images |
 | `js/scene.js` | Renderer, lights, procedural textures and materials |
@@ -82,8 +98,10 @@ The sun is placed for Wollongong (34.43° S, 150.89° E) for the chosen month an
 | `js/kart.js` | Kart and driver model |
 | `js/audio.js` | Synthesised engine, tyre, brake and wind sound |
 | `js/game.js` | Physics, lap timing and rules |
+| `js/view.js` | Camera, HUD and the frame loop (shared by both pages) |
 | `js/storage.js` | Saved sessions (IndexedDB) |
-| `js/main.js` | Camera, HUD, input, menu and saves |
+| `js/main.js` | Desktop keyboard and mouse input, menu and saves |
+| `js/phone.js` | Phone touch pads, tilt (gyro) controls and menu |
 | `development_assets/` | Reference photos, aerial images and the event rules used to build the game; not loaded at runtime |
 
 All textures and sounds are generated in code, so there are no image or audio files to ship.

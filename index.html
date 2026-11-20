@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <title>Kart Enduro - First Person</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<script>
+// phones and tablets get the touch / tilt version (index.html?desktop stays here)
+(function () {
+  var touchMac = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;      // iPadOS reports itself as a Mac
+  if ((/Android|iPhone|iPad|iPod|Mobile|Silk|Kindle/i.test(navigator.userAgent) || touchMac) && !/[?&]desktop\b/.test(location.search)) location.replace('index_phone.html');
+})();
+</script>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -90,6 +97,7 @@
 <script src="js/kart.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/game.js"></script>
+<script src="js/view.js"></script>
 <script src="js/storage.js"></script>
 <script src="js/main.js"></script>
 </body>
