@@ -46,25 +46,26 @@
     <h1>KART <span>ENDURO</span></h1>
     <p class="sub">First-person hire-kart racing &middot; 75 km/h &middot; clockwise</p>
 
-    <h3>1 &middot; Controls</h3>
-    <div class="modes">
-      <button class="mode" data-m="touch"><b>Touch</b><span>Steer with the pad on the left: drag it, or tap the arrows. Slide the right pad up to accelerate, down to brake. No head movement.</span></button>
-      <button class="mode" data-m="tilt"><b>Tilt (gyro)</b><span>Turn the device like a steering wheel. Tilt the top away from you to accelerate, towards you to brake. Swing it left or right to look around.</span></button>
-    </div>
-
-    <h3>2 &middot; Time of day</h3>
-    <div class="env">
-      <label>Month <select id="month"></select></label>
-      <label class="grow">Time <input type="range" id="tod" min="8" max="19" step="0.25" value="15"> <b id="todv"></b></label>
-      <div id="suninfo"></div>
-    </div>
-
-    <h3>3 &middot; Track &ndash; tap one to start</h3>
+    <h3>1 &middot; Track</h3>
     <div class="cards">
       <button class="card" data-k="full"><canvas id="pv_full" width="420" height="300"></canvas>
         <h2>Full Circuit</h2><div id="d_full"></div></button>
       <button class="card" data-k="short"><canvas id="pv_short" width="420" height="300"></canvas>
         <h2>Short Circuit</h2><div id="d_short"></div></button>
+    </div>
+
+    <h3>2 &middot; Time of day and fastest lap time</h3>
+    <div class="env">
+      <label>Month <select id="month"></select></label>
+      <label class="grow">Time <input type="range" id="tod" min="8" max="19" step="0.25" value="15"> <b id="todv"></b></label>
+      <label class="grow">Fastest lap time (break-out) <input type="range" id="bot" min="24" max="40" step="0.1" value="32.5"> <b id="botv"></b></label>
+      <div id="suninfo"></div>
+    </div>
+
+    <h3 id="starthead">3 &middot; Start &ndash; tap your controls</h3>
+    <div class="modes">
+      <button class="mode" data-m="touch"><b>&#9654; Start with Touch</b><span>Steer with the pad on the left: drag it, or tap the arrows. Slide the right pad up to accelerate, down to brake. No head movement.</span></button>
+      <button class="mode" data-m="tilt"><b>&#9654; Start with Tilt (gyro)</b><span>Turn the device like a steering wheel. Tilt the top away from you to accelerate, towards you to brake. Swing it left or right to look around.</span></button>
     </div>
 
     <div class="foot">

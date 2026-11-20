@@ -28,7 +28,7 @@ Pick one of the two track configurations on the start screen:
 | `V` | Outside view of the kart |
 | `H` | Helmet visor up / down |
 | `R` | Reset the kart onto the track |
-| `T` | Pause and open the menu (saves, track, month and time of day). `T` or `Esc` returns to the race |
+| `T` or `Shift` + `M` | Pause and go back to the start menu (saves, track, fastest lap time, month and time of day). `T` or `Esc` returns to the race |
 | `K` | Quick save |
 | `[` / `]` | Time of day earlier / later (15 minutes) |
 | `-` / `=` | Previous / next month |
@@ -38,7 +38,7 @@ Pick one of the two track configurations on the start screen:
 
 ## Phones and tablets
 
-Opening `index.html` on an iPhone, iPad or Android device redirects to `index_phone.html`, a touch version of the same game. Hold the device sideways (landscape). On the start menu choose a control option, the month and time of day, then tap a track to start.
+Opening `index.html` on an iPhone, iPad or Android device redirects to `index_phone.html`, a touch version of the same game. Hold the device sideways (landscape). On the start menu select a track, set the month, time of day and fastest lap time, then tap **Start with Touch** or **Start with Tilt**.
 
 | Option | Steering | Accelerate / brake | Head |
 | --- | --- | --- | --- |
@@ -57,7 +57,7 @@ The game follows the rules of the venue's 4-hour enduro. When you break one, the
 
 1. **Event details.** A 4-hour trial of endurance for karts and drivers, run with at least three drivers per kart. The event rewards consistency.
 2. **Event format.** The course runs **clockwise**. Each driver does a stint of at least 20 minutes. The winner is the team that completes the most laps with the most consistent lap times. *In the game:* driving the wrong way triggers a Rule 2 warning, and the timing panel shows your lap-time consistency and stint time.
-3. **Break-out lap time.** A fastest permitted lap time is nominated for the event. The first and second break-outs earn a warning; from the third, each one costs a 1-lap penalty. There is no penalty for being slower. *In the game:* the break-out time is 32.5 s on the Full Circuit and 26.2 s on the Short Circuit.
+3. **Break-out lap time.** A fastest permitted lap time is nominated for the event. The first and second break-outs earn a warning; from the third, each one costs a 1-lap penalty. There is no penalty for being slower. *In the game:* the break-out time defaults to 32.5 s on the Full Circuit and 26.2 s on the Short Circuit. The **Fastest lap time** slider on the start menu sets your own value from 24 to 40 s.
 4. **Driving standards.** No contact between karts, and no running off the track. Repeated offences earn a black flag, and three black flags exclude the driver. *In the game:* leaving the track voids the lap, every third off-track excursion is a black flag, and three black flags end the session.
 5. **Trophies** go to 1st, 2nd and 3rd outright.
 
