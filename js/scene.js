@@ -2,7 +2,7 @@
 /* ---------------------------------------------------------------- renderer / scene */
 const canvas = $('c');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, MOBILE ? 1.5 : 2));
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 0.62;
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -14,7 +14,7 @@ camera.rotation.order = 'YXZ';
 const hemi = new THREE.HemisphereLight(0xffffff, 0x6f7a5c, 0.8); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffffff, 2.5);
 {
-  const SH = 180, sc = sun.shadow.camera, sz = Math.min(4096, renderer.capabilities.maxTextureSize);
+  const SH = 180, sc = sun.shadow.camera, sz = Math.min(MOBILE ? 2048 : 4096, renderer.capabilities.maxTextureSize);
   sun.castShadow = true; sc.left = -SH; sc.right = SH; sc.top = SH; sc.bottom = -SH; sc.near = 40; sc.far = 900;
   sun.shadow.mapSize.set(sz, sz); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05;
   scene.add(sun, sun.target);

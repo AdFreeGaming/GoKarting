@@ -190,3 +190,8 @@ function applySun() {
     '  ·  sunrise ' + clock(s.rise) + ', sunset ' + clock(s.set) + ' (' + (s.tz === 11 ? 'AEDT' : 'AEST') + ')';
   ENV.sun = s; ENV.applied = ENV.hour;
 }
+// start at the computer's clock time if it is daytime at the circuit, otherwise at 3 pm
+function matchClock() {
+  const now = new Date(), h = now.getHours() + now.getMinutes() / 60;
+  ENV.month = now.getMonth(); ENV.hour = (h >= 8 && h <= 19 && sunVector(ENV.month, h).el > 0) ? h : 15; applySun();
+}

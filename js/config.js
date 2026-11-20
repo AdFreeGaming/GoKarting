@@ -1,5 +1,7 @@
 'use strict';
 if (!window.THREE) { document.getElementById('err').style.display = 'block'; throw new Error('three.js missing'); }
+const MOBILE = !!window.KART_MOBILE;      // set by index_phone.html before the scripts load
+const RESTART_TIP = MOBILE ? 'Tap Restart' : 'Press Enter to restart';
 const $ = id => document.getElementById(id);
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 const angDiff = (a, b) => { let d = a - b; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
