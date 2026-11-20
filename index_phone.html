@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kart Enduro - Phone &amp; Tablet</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#101418">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/phone.css">
+<script>window.KART_MOBILE = true;</script>
+</head>
+<body class="touch">
+<canvas id="c"></canvas>
+
+<div id="timing" class="hud panel">
+  <div class="row"><span>Lap <b id="lapn">-</b></span><span id="trk"></span></div>
+  <div class="big" id="cur">0.000</div>
+  <div class="row"><span>Last</span><span id="last">-</span></div>
+  <div class="row"><span>Best</span><span id="best">-</span></div>
+  <div class="row"><span>Consistency</span><span id="cons">-</span></div>
+  <div class="row"><span>Stint</span><span id="stint">0:00</span></div>
+  <div class="row"><span>Time</span><span id="envhud"></span></div>
+</div>
+<div id="bar">
+  <button id="b_menu">&#9776; Menu</button>
+  <button id="b_restart">&#8635; Restart</button>
+  <button id="b_centre">&#9678; Centre</button>
+</div>
+<div id="map" class="hud panel"><canvas id="mapc" width="180" height="180"></canvas></div>
+<div id="speedo" class="hud panel">
+  <div id="spd">0<small>km/h</small></div>
+  <div id="rpmwrap"><div id="rpm"></div></div>
+  <div id="rpmtxt">0 RPM</div>
+  <div id="rules">R3 break-out <b id="bo">-</b> <b id="bon">0</b>/2 &middot; R4 off <b id="offn">0</b>/3 &middot; flags <b id="bfn">0</b>/3 &middot; pen <b id="pen">0</b></div>
+</div>
+<div id="msg" class="hud"></div>
+
+<!-- option 1: touch pads (in tilt mode they only show what the gyro is doing) -->
+<div id="steer" class="pad"><i>&#9664;</i><i>&#9654;</i><div class="knob"></div></div>
+<div id="pedal" class="pad"><span class="go">GO</span><span class="stop">BRAKE</span><div class="line"></div><div class="knob"></div></div>
+
+<div id="menu">
+  <div class="box">
+    <h1>KART <span>ENDURO</span></h1>
+    <p class="sub">First-person hire-kart racing &middot; 75 km/h &middot; clockwise</p>
+
+    <h3>1 &middot; Controls</h3>
+    <div class="modes">
+      <button class="mode" data-m="touch"><b>Touch</b><span>Steer with the pad on the left: drag it, or tap the arrows. Slide the right pad up to accelerate, down to brake. No head movement.</span></button>
+      <button class="mode" data-m="tilt"><b>Tilt (gyro)</b><span>Turn the device like a steering wheel. Tilt the top away from you to accelerate, towards you to brake. Swing it left or right to look around.</span></button>
+    </div>
+
+    <h3>2 &middot; Time of day</h3>
+    <div class="env">
+      <label>Month <select id="month"></select></label>
+      <label class="grow">Time <input type="range" id="tod" min="8" max="19" step="0.25" value="15"> <b id="todv"></b></label>
+      <div id="suninfo"></div>
+    </div>
+
+    <h3>3 &middot; Track &ndash; tap one to start</h3>
+    <div class="cards">
+      <button class="card" data-k="full"><canvas id="pv_full" width="420" height="300"></canvas>
+        <h2>Full Circuit</h2><div id="d_full"></div></button>
+      <button class="card" data-k="short"><canvas id="pv_short" width="420" height="300"></canvas>
+        <h2>Short Circuit</h2><div id="d_short"></div></button>
+    </div>
+
+    <div class="foot">
+      <button id="resumebtn">Back to race</button>
+      <span><b>Rule 2</b> clockwise, consistent laps win &middot; <b>Rule 3</b> laps under the break-out time: two warnings, then a lap penalty each &middot;
+        <b>Rule 4</b> running off voids the lap; 3 offs = black flag, 3 flags = excluded. &nbsp; <a href="index.html?desktop">Desktop version</a></span>
+    </div>
+  </div>
+</div>
+<div id="rotate"><div>&#8635;<br>Turn your device sideways to drive</div></div>
+<div id="err">Could not load the three.js WebGL engine from the CDN. Check your internet connection and reload.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Sky.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Lensflare.js"></script>
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/world.js"></script>
+<script src="js/trackmesh.js"></script>
+<script src="js/kart.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+<script src="js/view.js"></script>
+<script src="js/phone.js"></script>
+</body>
+</html>
