@@ -43,11 +43,12 @@ Opening `index.html` on an iPhone, iPad or Android device redirects to `index_ph
 | Option | Steering | Accelerate / brake | Head |
 | --- | --- | --- | --- |
 | **Touch** | Pad on the left: drag the knob, or tap the arrows for full lock | Slider on the right: up to accelerate, down to brake | Fixed, looking ahead |
-| **Tilt (gyro)** | Turn the device like a steering wheel | Tilt the top away from you to accelerate, towards you to brake | Swing the device left or right to look that way |
+| **Tilt (gyro)** | Turn the device like a steering wheel | Tilt the top away from you to accelerate, towards you to brake | Fixed, looking ahead |
 
 - **Menu** pauses and returns to the start menu, where **Back to race** resumes. **Restart** restarts the session on the same track; tap it twice to confirm.
 - In tilt mode, **Centre** resets the neutral position to how you are holding the device. The game also does this about a second after each start.
 - Tilt needs the page to be served over `https` (GitHub Pages is fine), and on an iPhone or iPad you must allow motion access when asked. If no sensor data arrives, the game switches to touch controls.
+- If accelerate and brake feel the wrong way round in tilt mode, tick **Tilt: swap accelerate and brake** on the start menu.
 - Saved sessions are not available in the phone version.
 - To use the keyboard version on a tablet, open `index.html?desktop`.
 
