@@ -2,14 +2,14 @@
 /* ---------------------------------------------------------------- phone / tablet front end (index_phone.html)
    Two control options, chosen on the start menu:
      touch – steering pad on the left, accelerate / brake slider on the right, no head movement
-     tilt  – gyro: roll steers, pitch accelerates and brakes, yaw turns the driver's head left / right
+     tilt  – gyro: roll steers, pitch accelerates and brakes; the head stays facing forward
    Physics, rules, scenery and the render loop are shared with the desktop game; saved sessions are not offered here. */
 const menu = $('menu'), MODE_KEY = 'kart-enduro-controls', NEUTRAL = 0.62;      // NEUTRAL: rest position of the pedal slider (fraction from the top)
 INPUT = { thr: 0, brk: 0, st: 0 };
 let mode = 'touch', pick = 'full';      // pick: the track selected on the menu
 try { if (localStorage.getItem(MODE_KEY) === 'tilt') mode = 'tilt'; } catch (e) {}
 function setMode(m) {
-  mode = m; document.body.className = m; mouseLook = m === 'tilt';      // mouseLook keeps the head where the gyro puts it
+  mode = m; document.body.className = m; mouseLook = false;
   for (const b of document.querySelectorAll('.mode')) b.classList.toggle('on', b.dataset.m === m);
   INPUT.thr = INPUT.brk = INPUT.st = 0; head.my = head.mp = 0;
   try { localStorage.setItem(MODE_KEY, m); } catch (e) {}
@@ -36,9 +36,10 @@ pad($('pedal'), (x, y, w, h) => {
    X east, Y north, Z up) and read along the screen's own axes, so it works in either landscape direction and in portrait:
      roll  = how far the screen's right edge is above the horizon          -> steering
      pitch = how far the screen leans back from vertical, vs. calibration  -> accelerate / brake
-     yaw   = compass heading of the direction the screen faces away from   -> head left / right */
-const tilt = { ok: false, roll: 0, pitch: 0, yaw: 0, p0: null, y0: 0, calAt: 0, since: 0, listening: false };
-const screenAngle = () => (screen.orientation && typeof screen.orientation.angle === 'number') ? screen.orientation.angle : (window.orientation || 0);
+   Turning the whole device left or right (yaw) is deliberately ignored, so it cannot be mistaken for anything else. */
+const tilt = { ok: false, roll: 0, pitch: 0, p0: null, calAt: 0, since: 0, listening: false, flip: false };      // flip: player swapped accelerate / brake
+// which way the page is turned: window.orientation where it exists (iPhone / iPad report it reliably), else screen.orientation
+const screenAngle = () => typeof window.orientation === 'number' ? window.orientation : (screen.orientation && typeof screen.orientation.angle === 'number') ? screen.orientation.angle : 0;
 function onOrient(e) {
   if (e.beta == null || e.gamma == null) return;
   const d = Math.PI / 180, a = (e.alpha || 0) * d, b = e.beta * d, g = e.gamma * d;
@@ -50,9 +51,6 @@ function onOrient(e) {
   const uz = s * X[2] + c * Y[2];                                                  // screen up (height only)
   tilt.roll = Math.asin(clamp(r[2], -1, 1));
   tilt.pitch = Math.atan2(N[2], uz);
-  // heading: use the screen normal while the device is fairly upright, the screen's right edge when it lies flat
-  const w = clamp((Math.hypot(N[0], N[1]) - 0.2) / 0.3, 0, 1);
-  tilt.yaw = Math.atan2(-N[1] * w + r[0] * (1 - w), -N[0] * w - r[1] * (1 - w));
   tilt.ok = true;
 }
 // iOS asks the player for motion access, and only from a tap; sensors also need https (or localhost)
@@ -74,13 +72,11 @@ function tiltInput(dt) {
   if (tilt.p0 === null) {                                     // neutral position = how the device is held a moment after starting
     INPUT.thr = INPUT.brk = INPUT.st = 0;
     if (now < tilt.calAt) return;
-    tilt.p0 = tilt.pitch; tilt.y0 = tilt.yaw; say('Tilt forward to go, back to brake', '#fff', 2.5);
+    tilt.p0 = tilt.pitch; say('Tilt the top edge away to go, towards you to brake', '#fff', 2.5);
   }
-  const p = angDiff(tilt.pitch, tilt.p0);
+  const p = angDiff(tilt.pitch, tilt.p0) * (tilt.flip ? -1 : 1);
   INPUT.st = clamp(-dead(tilt.roll, 0.03) / 0.5, -1, 1);       // full lock at about 30 degrees
   INPUT.thr = clamp(dead(p, 0.07) / 0.3, 0, 1); INPUT.brk = clamp(dead(-p, 0.07) / 0.25, 0, 1);
-  const look = clamp(dead(angDiff(tilt.yaw, tilt.y0), 0.04) * 1.8, -1.7, 1.7);      // amplified so the screen stays in view
-  head.my += (look - head.my) * Math.min(1, dt * 10); head.mp = 0;
 }
 
 /* ---------------------------------------------------------------- per-frame hook: read the controls, move the pad knobs */
@@ -132,7 +128,12 @@ for (const b of document.querySelectorAll('.card')) b.addEventListener('click', 
 for (const b of document.querySelectorAll('.mode')) b.addEventListener('click', () => { setMode(b.dataset.m); choose(pick); });
 $('resumebtn').addEventListener('click', closeMenu);
 $('b_menu').addEventListener('click', openMenu);
-$('b_centre').addEventListener('click', () => { calibrate(0); head.my = 0; });
+$('b_centre').addEventListener('click', () => calibrate(0));
+// in case accelerate / brake feel the wrong way round on a particular device
+const FLIP_KEY = 'kart-enduro-tilt-flip';
+try { tilt.flip = localStorage.getItem(FLIP_KEY) === '1'; } catch (e) {}
+$('flip').checked = tilt.flip;
+$('flip').addEventListener('change', e => { tilt.flip = e.target.checked; try { localStorage.setItem(FLIP_KEY, tilt.flip ? '1' : '0'); } catch (x) {} });
 // Restart wipes the session, so it takes a second tap to confirm (unless the driver has been excluded)
 let armT = 0;
 $('b_restart').addEventListener('click', e => {
