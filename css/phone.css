@@ -53,16 +53,21 @@ body.tilt #pedal{transform-origin:right bottom}
 .mode{flex:1 1 0;background:#131b24;border:2px solid #ffffff1c;border-radius:12px;padding:10px 12px;text-align:left;color:#fff;font:inherit;touch-action:manipulation}
 .mode b{display:block;font-size:16px;margin-bottom:3px}
 .mode span{font-size:12px;line-height:1.4;color:#9fb0c0;display:block}
-.mode.on{border-color:#ff8a2b;background:#22190f}
-.mode.on b::after{content:" \2713";color:#ff8a2b}
+.mode b{color:#ff8a2b}
+.mode:active{border-color:#ff8a2b;background:#22190f}
 .env{margin-top:0;padding:8px 12px;font-size:13px}
-.env input[type=range]{height:30px}
+.env input[type=range]{height:30px;min-width:110px}
+.env select{min-width:132px;font-size:16px;padding:7px 8px}
+.env label{white-space:nowrap}
+.env label.grow{flex:1 1 300px}
 .cards{gap:10px;flex-wrap:nowrap}
 .card{flex:1 1 0;padding:9px;touch-action:manipulation;display:flex;align-items:center;gap:12px}
 .card canvas{width:120px;flex:none}
 .card h2{flex:none}
 @media (max-width:620px){.card{display:block}.card canvas{width:100%}}
-.card:hover{transform:none}
+.card:hover,.card:focus{transform:none;border-color:#ffffff1c}
+.card.on,.card.on:hover,.card.on:focus{border-color:#ff8a2b;background:#22190f}
+.card.on h2::after{content:" \2713";color:#ff8a2b}
 .card h2{font-size:16px;margin:6px 0 1px}
 .card div{font-size:12px}
 .foot{display:flex;gap:12px;align-items:center;margin-top:12px;font-size:11.5px;line-height:1.5;color:#9fb0c0}
