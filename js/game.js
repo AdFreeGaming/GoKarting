@@ -4,6 +4,9 @@ const keys = {};
 const S = { x: 0, z: 0, h: 0, v: 0, steer: 0, rpm: RPM_IDLE, thr: 0, brk: 0, slide: 0, lat: 0, onGrass: false, shake: 0, near: { i: 0, d: 0 } };
 const R = {};      // race / rules state
 const head = { my: 0, mp: 0, ky: 0, kp: 0 };
+let INPUT = null;      // analog controls { thr, brk, st } in 0..1 / -1..1; when set (phone page) they replace the keys
+let BO_CUSTOM = null;      // break-out (fastest permitted lap) time chosen on the menu slider; null = the track's default
+const breakoutFor = key => BO_CUSTOM || BREAKOUT[key];
 let running = false, auto = false, time = 0, chase = false, mouseLook = false, sessionActive = false;
 
 function resetKart(idx) {
@@ -14,8 +17,8 @@ function startSession(key) {
   if (key) buildTrack(key);
   resetKart(); time = 0;
   Object.assign(R, { started: false, cp: 3, prevS: 0.98, lapStart: 0, laps: 0, last: null, best: null, valid: [], invalid: false,
-    wasOff: false, offs: 0, flags: 0, bo: 0, pen: 0, excluded: false, wrong: 0, breakout: BREAKOUT[track.key] });
-  $('trk').textContent = track.name + ' · ' + Math.round(track.L) + ' m'; $('bo').textContent = R.breakout.toFixed(1) + ' s';
+    wasOff: false, offs: 0, flags: 0, bo: 0, pen: 0, excluded: false, wrong: 0, breakout: breakoutFor(track.key) });
+  $('trk').textContent = track.name + ' · ' + Math.round(track.L) + ' m'; $('bo').textContent = R.breakout.toFixed(2) + ' s';
   head.my = head.mp = 0; running = true; sessionActive = true;
   say('Cross the line to start your first lap', '#fff', 3.5);
 }
@@ -40,9 +43,10 @@ function update(dt) {
   ENV.hour = Math.min(23.98, ENV.hour + dt / 3600);          // the day moves on while you race
   const T = track;
   let thr = keys.KeyW ? 1 : 0, brk = keys.KeyS ? 1 : 0, st = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0);
+  if (INPUT) { thr = INPUT.thr; brk = INPUT.brk; st = INPUT.st; }
   const grip = S.onGrass ? 5.5 : 14.5;
   if (auto) { const a = autopilot(grip); thr = a.thr; brk = a.brk; st = a.st; S.steer += clamp(st - S.steer, -9 * dt, 9 * dt); }
-  else if (st !== 0) S.steer += clamp(st - S.steer, -3.4 * dt, 3.4 * dt);
+  else if (st !== 0) { const r = (INPUT ? 6 : 3.4) * dt; S.steer += clamp(st - S.steer, -r, r); }
   else S.steer -= S.steer * Math.min(1, dt * 1.5);          // keys released: the wheel drifts back to centre rather than snapping
   if (R.excluded) { thr = 0; brk = 1; }
 
@@ -55,8 +59,8 @@ function update(dt) {
 
   // drive / brake
   let drive = 0, resist = 0.07 * Math.abs(lat);
-  if (thr) drive = v < -0.1 ? 8 : 6.2 * (1 - Math.pow(Math.max(v, 0) / VMAX, 2)) * (S.onGrass ? 0.5 : 1);
-  if (brk) { if (v > 0.3) resist += S.onGrass ? 5 : 10.5; else if (!thr) drive = -2.5 * (1 + v / 3); }
+  if (thr) drive = thr * (v < -0.1 ? 8 : 6.2 * (1 - Math.pow(Math.max(v, 0) / VMAX, 2)) * (S.onGrass ? 0.5 : 1));
+  if (brk) { if (v > 0.3) resist += brk * (S.onGrass ? 5 : 10.5); else if (!thr) drive = -2.5 * (1 + v / 3); }
   if (!thr && !brk) resist += 0.55 + 0.035 * av;
   if (S.onGrass) resist += 1.5 + 0.25 * av;
   v += drive * dt; v = Math.sign(v) * Math.max(0, Math.abs(v) - resist * dt);
@@ -97,7 +101,7 @@ function update(dt) {
     R.offs++; R.invalid = true;
     if (R.offs % 3 === 0) {
       R.flags++;
-      if (R.flags >= 3) { R.excluded = true; say('RULE 4 · EXCLUDED – 3 black flags.  Press Enter to restart', '#ff6b5e', 1e9); }
+      if (R.flags >= 3) { R.excluded = true; say('RULE 4 · EXCLUDED – 3 black flags.  ' + RESTART_TIP, '#ff6b5e', 1e9); }
       else say('RULE 4 · BLACK FLAG ' + R.flags + '/3 – repeated running off the track', '#ff6b5e', 4);
     } else say('RULE 4 · OFF TRACK – lap void', '#ffcf5a', 2);
   }

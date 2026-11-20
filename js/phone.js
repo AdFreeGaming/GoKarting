@@ -6,7 +6,7 @@
    Physics, rules, scenery and the render loop are shared with the desktop game; saved sessions are not offered here. */
 const menu = $('menu'), MODE_KEY = 'kart-enduro-controls', NEUTRAL = 0.62;      // NEUTRAL: rest position of the pedal slider (fraction from the top)
 INPUT = { thr: 0, brk: 0, st: 0 };
-let mode = 'touch';
+let mode = 'touch', pick = 'full';      // pick: the track selected on the menu
 try { if (localStorage.getItem(MODE_KEY) === 'tilt') mode = 'tilt'; } catch (e) {}
 function setMode(m) {
   mode = m; document.body.className = m; mouseLook = m === 'tilt';      // mouseLook keeps the head where the gyro puts it
@@ -107,6 +107,7 @@ function goFullscreen() {                                     // Android only: i
 function openMenu() {
   running = false; menu.style.display = 'flex'; INPUT.thr = INPUT.brk = INPUT.st = 0;
   $('resumebtn').style.display = sessionActive ? 'block' : 'none';
+  $('starthead').textContent = sessionActive ? '3 · Start a new session – tap your controls' : '3 · Start – tap your controls';
 }
 function begin() { menu.style.display = 'none'; goFullscreen(); keepAwake(); if (mode === 'tilt') calibrate(900); }
 function closeMenu() {
@@ -125,8 +126,10 @@ function choose(key) {
   };
   if (mode === 'tilt') askMotion().then(go); else go(true);
 }
-for (const b of document.querySelectorAll('.mode')) b.addEventListener('click', () => setMode(b.dataset.m));
-for (const b of document.querySelectorAll('.card')) b.addEventListener('click', () => choose(b.dataset.k));
+// tap a track to select it, then tap Touch or Tilt to start
+function pickTrack(key) { pick = key; for (const b of document.querySelectorAll('.card')) b.classList.toggle('on', b.dataset.k === key); }
+for (const b of document.querySelectorAll('.card')) b.addEventListener('click', () => pickTrack(b.dataset.k));
+for (const b of document.querySelectorAll('.mode')) b.addEventListener('click', () => { setMode(b.dataset.m); choose(pick); });
 $('resumebtn').addEventListener('click', closeMenu);
 $('b_menu').addEventListener('click', openMenu);
 $('b_centre').addEventListener('click', () => { calibrate(0); head.my = 0; });
@@ -145,10 +148,9 @@ if (portrait.addEventListener) portrait.addEventListener('change', onTurn); else
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('gesturestart', e => e.preventDefault());      // iOS pinch zoom
 
-for (const key of ['full', 'short']) {
-  drawTrack($('pv_' + key).getContext('2d'), TRACKS[key], 420, 300, '#f2f2f2', 9, TRACKS[key === 'full' ? 'short' : 'full']);
-  $('d_' + key).textContent = Math.round(TRACKS[key].L) + ' m · break-out ' + BREAKOUT[key].toFixed(1) + ' s';
-}
+for (const key of ['full', 'short']) drawTrack($('pv_' + key).getContext('2d'), TRACKS[key], 420, 300, '#f2f2f2', 9, TRACKS[key === 'full' ? 'short' : 'full']);
+initBreakout(() => { for (const key of ['full', 'short']) $('d_' + key).textContent = Math.round(TRACKS[key].L) + ' m · break-out ' + breakoutFor(key).toFixed(2) + ' s'; });
+pickTrack(pick);
 MONTHS.forEach((m, i) => { const o = document.createElement('option'); o.value = i; o.textContent = m; $('month').appendChild(o); });
 $('month').addEventListener('change', e => { ENV.month = +e.target.value; ENV.manual = true; applySun(); });
 $('tod').addEventListener('input', e => { ENV.hour = +e.target.value; ENV.manual = true; applySun(); });
