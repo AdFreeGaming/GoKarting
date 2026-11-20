@@ -2,7 +2,8 @@
 
 A first-person hire-kart racing game that runs in the browser. You drive a 75 km/h kart around a 540 m circuit in Wollongong, Australia, under the rules of a 4-hour team endurance event: clockwise, consistent laps, no running off the track.
 
-![Aerial view of the circuit](development_assets/Track/Track.png)
+<img width="850" height="841" alt="image" src="https://github.com/user-attachments/assets/cd307066-8012-4b2c-8e99-4de4c99acb27" />
+
 
 ## Playing
 
