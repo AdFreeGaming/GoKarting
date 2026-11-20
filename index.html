@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kart Enduro - First Person</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div id="timing" class="hud panel">
+  <div class="row"><span>Lap <b id="lapn">-</b></span><span id="trk"></span></div>
+  <div class="big" id="cur">0.000</div>
+  <div class="row"><span>Last</span><span id="last">-</span></div>
+  <div class="row"><span>Best</span><span id="best">-</span></div>
+  <div class="row"><span>Consistency</span><span id="cons">-</span></div>
+  <div class="row"><span>Stint</span><span id="stint">0:00</span></div>
+  <div class="row"><span>Time of day</span><span id="envhud"></span></div>
+</div>
+<div id="speedo" class="hud panel">
+  <div id="spd">0<small>km/h</small></div>
+  <div id="rpmwrap"><div id="rpm"></div></div>
+  <div id="rpmtxt">0 RPM</div>
+</div>
+<div id="map" class="hud panel"><canvas id="mapc" width="180" height="180"></canvas></div>
+<div id="rules" class="hud panel">
+  <div>Rule 3 &middot; Break-out time <b id="bo">-</b> &nbsp;(<b id="bon">0</b>/2 warnings)</div>
+  <div>Rule 4 &middot; Off-track <b id="offn">0</b>/3 &nbsp; Black flags <b id="bfn">0</b>/3</div>
+  <div>Lap penalties <b id="pen">0</b></div>
+</div>
+<div id="msg" class="hud"></div>
+<div id="hint" class="hud">Click to turn your head with the mouse</div>
+
+<div id="menu">
+  <div class="box">
+    <h1>KART <span>ENDURO</span></h1>
+    <p class="sub">First-person hire-kart racing &middot; 75 km/h &middot; clockwise &middot; choose a track configuration</p>
+    <div class="cards">
+      <button class="card" data-k="full"><canvas id="pv_full" width="420" height="300"></canvas>
+        <h2>1 &middot; Full Circuit</h2><div id="d_full"></div></button>
+      <button class="card" data-k="short"><canvas id="pv_short" width="420" height="300"></canvas>
+        <h2>2 &middot; Short Circuit</h2><div id="d_short"></div></button>
+    </div>
+    <div class="env">
+      <label>Month <select id="month"></select></label>
+      <label class="grow">Time of day <input type="range" id="tod" min="8" max="19" step="0.25" value="15"> <b id="todv"></b></label>
+      <div id="suninfo"></div>
+    </div>
+    <div class="saves">
+      <h3>Saved sessions</h3>
+      <div id="savebar">
+        <input id="savelabel" maxlength="40" placeholder="Label this save, e.g. Team 7 - stint 2" autocomplete="off">
+        <button id="savebtn">Save progress</button>
+        <button id="resumebtn" class="ghost">Back to race</button>
+        <span>Picking a track above starts a new session.</span>
+      </div>
+      <div id="savelist"></div>
+    </div>
+    <div class="cols">
+      <div><h3>Controls</h3>
+        <kbd>W</kbd> throttle &nbsp; <kbd>S</kbd> brake / reverse<br>
+        <kbd>A</kbd> <kbd>D</kbd> steer<br>
+        Mouse or <kbd>&larr;</kbd><kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&rarr;</kbd> move the driver's head; click to release / resume mouse tracking<br>
+        <kbd>C</kbd> re-centre head &nbsp; <kbd>V</kbd> outside view of the kart &nbsp; <kbd>H</kbd> visor up / down<br>
+        <kbd>R</kbd> reset to track &nbsp; <kbd>M</kbd> mute &nbsp; <kbd>P</kbd> autopilot demo<br>
+        <kbd>T</kbd> pause: menu, saves, track and time &nbsp; <kbd>K</kbd> quick save<br>
+        <kbd>Shift</kbd>+<kbd>Enter</kbd> restart session<br>
+        <kbd>[</kbd> <kbd>]</kbd> time of day &nbsp; <kbd>-</kbd> <kbd>=</kbd> month
+      </div>
+      <div><h3>Enduro rules</h3>
+        <b>Rule 2</b> &middot; Course runs clockwise. Consistent laps win.<br>
+        <b>Rule 3</b> &middot; Laps quicker than the nominated <b>break-out time</b>: two warnings, then a 1-lap penalty each time.<br>
+        <b>Rule 4</b> &middot; Running off the track voids the lap; 3 offs = black flag, 3 black flags = excluded.<br>
+        Lap under 40 s on the full circuit to qualify.
+      </div>
+    </div>
+  </div>
+</div>
+<div id="err">Could not load the three.js WebGL engine from the CDN. Check your internet connection and reload.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Sky.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Lensflare.js"></script>
+<script src="js/config.js"></script>
+<script src="js/track.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/world.js"></script>
+<script src="js/trackmesh.js"></script>
+<script src="js/kart.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

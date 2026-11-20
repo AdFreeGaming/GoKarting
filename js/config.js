@@ -1,0 +1,15 @@
+'use strict';
+if (!window.THREE) { document.getElementById('err').style.display = 'block'; throw new Error('three.js missing'); }
+const $ = id => document.getElementById(id);
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+const angDiff = (a, b) => { let d = a - b; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI; return d; };
+
+/* ---------------------------------------------------------------- constants */
+const VMAX = 75 / 3.6;          // 75 km/h
+const FULL_LENGTH = 540;        // metres (development_assets/Track/Track_length.txt)
+const HW = 3.75;                // half track width (m)
+const RUNOFF = 3.5;             // grass verge before the tyre wall (m)
+const WHEELBASE = 1.05;
+const BARRIER_LIM = HW + RUNOFF - 0.9;
+const RPM_IDLE = 2200, RPM_CLUTCH = 5600, RPM_MAX = 13500;
+const BREAKOUT = { full: 32.5, short: 26.2 };
