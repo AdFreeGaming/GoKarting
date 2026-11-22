@@ -11,7 +11,7 @@
   if ((/Android|iPhone|iPad|iPod|Mobile|Silk|Kindle/i.test(navigator.userAgent) || touchMac) && !/[?&]desktop\b/.test(location.search)) location.replace('index_phone.html');
 })();
 </script>
-<link rel="stylesheet" href="css/style.css?v=5">
+<link rel="stylesheet" href="css/style.css?v=8">
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -48,6 +48,8 @@
         <h2>1 &middot; Full Circuit</h2><div id="d_full"></div></button>
       <button class="card" data-k="short"><canvas id="pv_short" width="420" height="300"></canvas>
         <h2>2 &middot; Short Circuit</h2><div id="d_short"></div></button>
+      <button class="card" data-k="long"><canvas id="pv_long" width="420" height="300"></canvas>
+        <h2>3 &middot; Long Circuit</h2><div id="d_long"></div></button>
     </div>
     <div class="env">
       <label>Month <select id="month"></select></label>
@@ -74,7 +76,8 @@
         <kbd>R</kbd> reset to track &nbsp; <kbd>M</kbd> mute &nbsp; <kbd>P</kbd> autopilot demo<br>
         <kbd>T</kbd> or <kbd>Shift</kbd>+<kbd>M</kbd> pause / start menu: saves, track and time &nbsp; <kbd>K</kbd> quick save<br>
         <kbd>Shift</kbd>+<kbd>Enter</kbd> restart session<br>
-        <kbd>[</kbd> <kbd>]</kbd> time of day &nbsp; <kbd>-</kbd> <kbd>=</kbd> month
+        <kbd>[</kbd> <kbd>]</kbd> time of day &nbsp; <kbd>-</kbd> <kbd>=</kbd> month<br>
+        <kbd>,</kbd> <kbd>.</kbd> field of view narrower / wider (90&deg;&ndash;210&deg;)
       </div>
       <div><h3>Enduro rules</h3>
         <b>Rule 2</b> &middot; Course runs clockwise. Consistent laps win.<br>
@@ -90,16 +93,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Sky.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/objects/Lensflare.js"></script>
-<script src="js/config.js?v=5"></script>
-<script src="js/track.js?v=5"></script>
-<script src="js/scene.js?v=5"></script>
-<script src="js/world.js?v=5"></script>
-<script src="js/trackmesh.js?v=5"></script>
-<script src="js/kart.js?v=5"></script>
-<script src="js/audio.js?v=5"></script>
-<script src="js/game.js?v=5"></script>
-<script src="js/view.js?v=5"></script>
-<script src="js/storage.js?v=5"></script>
-<script src="js/main.js?v=5"></script>
+<script src="js/config.js?v=8"></script>
+<script src="js/track.js?v=8"></script>
+<script src="js/scene.js?v=8"></script>
+<script src="js/world.js?v=8"></script>
+<script src="js/trackmesh.js?v=8"></script>
+<script src="js/kart.js?v=8"></script>
+<script src="js/audio.js?v=8"></script>
+<script src="js/game.js?v=8"></script>
+<script src="js/view.js?v=8"></script>
+<script src="js/storage.js?v=8"></script>
+<script src="js/main.js?v=8"></script>
 </body>
 </html>

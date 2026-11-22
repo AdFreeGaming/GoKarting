@@ -8,12 +8,23 @@ A first-person hire-kart racing game that runs in the browser. You drive a 75 km
 
 Open `index.html` in a desktop browser (Chrome, Edge or Firefox). No install or build step is needed. An internet connection is required the first time, because the three.js engine is loaded from a CDN.
 
-Pick one of the two track configurations on the start screen:
+Pick one of the three track configurations on the start screen:
 
 | Configuration | Length |
 | --- | --- |
 | Full Circuit | 540 m |
 | Short Circuit | about 423 m |
+| Long Circuit | about 552 m |
+
+The Long Circuit takes the Full Circuit's top loop and returns through the Short Circuit's infield esses.
+
+### Pit lane
+
+Every configuration has the pit lane, drawn in green on the track maps. It leaves the track on the left before the last infield section and rejoins just before the start line.
+
+- The pit lane has a 10 km/h speed limiter, the pit zone limit for the enduro.
+- Driving through it is not an off-track excursion, and the lap still counts.
+- The pit bays are painted green on the left of the lane.
 
 ## Controls
 
@@ -32,6 +43,7 @@ Pick one of the two track configurations on the start screen:
 | `K` | Quick save |
 | `[` / `]` | Time of day earlier / later (15 minutes) |
 | `-` / `=` | Previous / next month |
+| `,` / `.` | Field of view narrower / wider, in 5° steps from 90° to 210° (horizontal). Above 120° the view becomes panoramic: three views side by side, like a triple-screen simulator. The setting is remembered |
 | `M` | Mute |
 | `P` | Autopilot demo |
 | `Shift` + `Enter` | Restart the session |
@@ -58,7 +70,7 @@ The game follows the rules of the venue's 4-hour enduro. When you break one, the
 
 1. **Event details.** A 4-hour trial of endurance for karts and drivers, run with at least three drivers per kart. The event rewards consistency.
 2. **Event format.** The course runs **clockwise**. Each driver does a stint of at least 20 minutes. The winner is the team that completes the most laps with the most consistent lap times. *In the game:* driving the wrong way triggers a Rule 2 warning, and the timing panel shows your lap-time consistency and stint time.
-3. **Break-out lap time.** A fastest permitted lap time is nominated for the event. The first and second break-outs earn a warning; from the third, each one costs a 1-lap penalty. There is no penalty for being slower. *In the game:* the break-out time defaults to 32.5 s on the Full Circuit and 26.2 s on the Short Circuit. The **Fastest lap time** slider on the start menu sets your own value from 24 to 40 s.
+3. **Break-out lap time.** A fastest permitted lap time is nominated for the event. The first and second break-outs earn a warning; from the third, each one costs a 1-lap penalty. There is no penalty for being slower. *In the game:* the break-out time defaults to 32.5 s on the Full Circuit, 26.2 s on the Short Circuit and 34.7 s on the Long Circuit. The **Fastest lap time** slider on the start menu sets your own value from 24 to 40 s.
 4. **Driving standards.** No contact between karts, and no running off the track. Repeated offences earn a black flag, and three black flags exclude the driver. *In the game:* leaving the track voids the lap, every third off-track excursion is a black flag, and three black flags end the session.
 5. **Trophies** go to 1st, 2nd and 3rd outright.
 
