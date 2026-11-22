@@ -1,6 +1,37 @@
 'use strict';
 /* ---------------------------------------------------------------- view + HUD (shared by the desktop and phone pages) */
 const tmpV = new THREE.Vector3(), tmpE = new THREE.Vector3(), mapG = $('mapc').getContext('2d');
+/* field of view: horizontal degrees, changed with the , and . keys and kept between visits.
+   null = the original view (78 degrees vertical). Up to FLAT degrees the picture is one ordinary perspective view. A flat picture
+   cannot show 180 degrees or more, so wider settings are drawn as three views side by side, like a triple-screen simulator. */
+const FOV = { h: null, MIN: 90, MAX: 210, FLAT: 120, STEP: 5, KEY: 'kart-enduro-fov' };
+try { const f = parseFloat(localStorage.getItem(FOV.KEY)); if (f >= FOV.MIN && f <= FOV.MAX) FOV.h = f; } catch (e) {}
+const eye = new THREE.PerspectiveCamera(60, 1, 0.1, 5000), viewSize = new THREE.Vector2(); camera.add(eye);      // eye: the side-by-side views turn inside the helmet
+function drawView(sf) {
+  const size = renderer.getSize(viewSize), W = size.x, H = size.y, rad = Math.PI / 180, boost = sf * sf * 8;      // the view widens a little with speed
+  const vert = (h, asp) => 2 * Math.atan(Math.tan(h * rad / 2) / asp) / rad;
+  const lens = (cam, fov, asp) => { if (Math.abs(cam.fov - fov) > 0.05 || Math.abs(cam.aspect - asp) > 1e-4) { cam.fov = fov; cam.aspect = asp; cam.updateProjectionMatrix(); } };
+  if (FOV.h === null || FOV.h <= FOV.FLAT) {
+    lens(camera, FOV.h === null ? 78 + boost : Math.min(150, vert(FOV.h, W / H) + boost), W / H);
+    renderer.render(scene, camera); return;
+  }
+  const h = Math.min(FOV.MAX, FOV.h + boost) / 3;
+  renderer.setScissorTest(true);
+  for (let i = 0; i < 3; i++) {
+    const x0 = Math.round(i * W / 3), w = Math.round((i + 1) * W / 3) - x0;
+    eye.rotation.y = (1 - i) * h * rad; lens(eye, vert(h, w / H), w / H);
+    renderer.setViewport(x0, 0, w, H); renderer.setScissor(x0, 0, w, H);
+    renderer.render(scene, eye); renderer.shadowMap.autoUpdate = false;      // shadows only need drawing once per frame
+  }
+  renderer.shadowMap.autoUpdate = true; renderer.setScissorTest(false); renderer.setViewport(0, 0, W, H);
+}
+addEventListener('keydown', e => {
+  if ((e.code !== 'Comma' && e.code !== 'Period') || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  const now = FOV.h === null ? Math.round(2 * Math.atan(Math.tan(39 * Math.PI / 180) * camera.aspect) * 180 / Math.PI / FOV.STEP) * FOV.STEP : FOV.h;
+  FOV.h = clamp(now + (e.code === 'Period' ? FOV.STEP : -FOV.STEP), FOV.MIN, FOV.MAX);
+  try { localStorage.setItem(FOV.KEY, FOV.h); } catch (x) {}
+  say('Field of view ' + FOV.h + '°' + (FOV.h > FOV.FLAT ? ' · panoramic' : ''), '#fff', 1.5);
+});
 function render(dt) {
   // head look: mouse is persistent, arrow keys glance and spring back
   const ty = ((keys.ArrowLeft ? 1 : 0) - (keys.ArrowRight ? 1 : 0)) * 1.25, tp = ((keys.ArrowUp ? 1 : 0) - (keys.ArrowDown ? 1 : 0)) * 0.45;
@@ -20,10 +51,9 @@ function render(dt) {
     camera.rotation.x = clamp(head.mp + head.kp, -0.9, 0.7) - 0.06;
     camera.rotation.z = clamp(-S.lat * 0.0025, -0.05, 0.05);
   }
-  driverHead.visible = chase; fpHelmet.visible = !chase;
+  driverHead.visible = chase; fpHelmet.visible = !chase && !(FOV.h > 110);      // the helmet eye-port is about 104 degrees wide: it would block wider settings
   const sd = ENV.sun, sx = S.x + sd.x * sunFx.DIST, sy = sd.y * sunFx.DIST, sz = S.z + sd.z * sunFx.DIST;
   sunFx.sprite.position.set(sx, sy, sz); if (sunFx.flare) sunFx.flare.position.set(sx, sy, sz);
-  const fov = 78 + sf * sf * 8; if (Math.abs(fov - camera.fov) > 0.05) { camera.fov = fov; camera.updateProjectionMatrix(); }
   wheelSpin.rotation.z = -S.steer * 1.25;
   for (const w of frontWheels) w.rotation.y = -S.steer * 0.45;
   for (const w of rollingWheels) w.rotation.x -= S.v * dt / 0.133;
@@ -33,7 +63,7 @@ function render(dt) {
     tmpE.copy(a.shoulder).add(tmpV).multiplyScalar(0.5); tmpE.x += a.s * 0.09; tmpE.y -= 0.1; tmpE.z += 0.03;
     limb(a.upper, a.shoulder, tmpE); limb(a.fore, tmpE, tmpV); a.elbow.position.copy(tmpE);
   }
-  renderer.render(scene, camera);
+  drawView(sf);
 
   // HUD
   $('spd').firstChild.nodeValue = Math.round(sp * 3.6);
