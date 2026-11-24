@@ -62,7 +62,8 @@ body.tilt #pedal{transform-origin:right bottom}
 .env label.grow{flex:1 1 300px}
 .cards{gap:10px;flex-wrap:nowrap}
 .card{flex:1 1 0;padding:9px;touch-action:manipulation;display:flex;align-items:center;gap:12px}
-.card canvas{width:120px;flex:none}
+.card canvas{width:84px;flex:none}
+.card{flex-wrap:wrap;gap:4px 10px}
 .card h2{flex:none}
 @media (max-width:620px){.card{display:block}.card canvas{width:100%}}
 .card:hover,.card:focus{transform:none;border-color:#ffffff1c}

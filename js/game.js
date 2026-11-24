@@ -1,7 +1,7 @@
 'use strict';
 /* ---------------------------------------------------------------- game state */
 const keys = {};
-const S = { x: 0, z: 0, h: 0, v: 0, steer: 0, rpm: RPM_IDLE, thr: 0, brk: 0, slide: 0, lat: 0, onGrass: false, shake: 0, near: { i: 0, d: 0 } };
+const S = { x: 0, z: 0, h: 0, v: 0, steer: 0, rpm: RPM_IDLE, thr: 0, brk: 0, slide: 0, lat: 0, onGrass: false, shake: 0, near: { i: 0, d: 0 }, inPit: false };
 const R = {};      // race / rules state
 const head = { my: 0, mp: 0, ky: 0, kp: 0 };
 let INPUT = null;      // analog controls { thr, brk, st } in 0..1 / -1..1; when set (phone page) they replace the keys
@@ -63,16 +63,22 @@ function update(dt) {
   if (brk) { if (v > 0.3) resist += brk * (S.onGrass ? 5 : 10.5); else if (!thr) drive = -2.5 * (1 + v / 3); }
   if (!thr && !brk) resist += 0.55 + 0.035 * av;
   if (S.onGrass) resist += 1.5 + 0.25 * av;
+  if (S.inPit && v > PIT_SPEED) { drive = 0; resist += 9; }      // pit lane speed limiter
   v += drive * dt; v = Math.sign(v) * Math.max(0, Math.abs(v) - resist * dt);
   S.v = v; S.thr += clamp(thr - S.thr, -8 * dt, 8 * dt); S.brk = brk;
   S.h += yaw * dt; S.x += Math.cos(S.h) * v * dt; S.z += Math.sin(S.h) * v * dt;
 
   // where are we on the circuit?
   const near = S.near = nearest(T, S.x, S.z), ci = near.i;
-  S.onGrass = near.d > HW + 0.35;
-  if (near.d > BARRIER_LIM) {                           // tyre wall
-    const nx = (S.x - T.x[ci]) / near.d, nz = (S.z - T.z[ci]) / near.d;
-    S.x = T.x[ci] + nx * BARRIER_LIM; S.z = T.z[ci] + nz * BARRIER_LIM;
+  // the pit lane is a second corridor alongside the track: drivable, walled, and not "off the track"
+  const pit = nearest(PIT, S.x, S.z), wasPit = S.inPit;
+  S.inPit = pit.d < PIT_HW + 0.3 && near.d > HW + 0.6;
+  if (S.inPit && !wasPit && R.started) say('PIT LANE · 10 km/h limit', '#3ddc84', 2.5);
+  S.onGrass = near.d > HW + 0.35 && pit.d > PIT_HW;
+  if (near.d > BARRIER_LIM && pit.d > PIT_LIM) {        // tyre wall (of whichever corridor is closer)
+    const p = pit.d - PIT_LIM < near.d - BARRIER_LIM, cx = p ? PIT.x[pit.i] : T.x[ci], cz = p ? PIT.z[pit.i] : T.z[ci], cd = p ? pit.d : near.d, lim = p ? PIT_LIM : BARRIER_LIM;
+    const nx = (S.x - cx) / cd, nz = (S.z - cz) / cd;
+    S.x = cx + nx * lim; S.z = cz + nz * lim;
     const fx = Math.cos(S.h), fz = Math.sin(S.h), fn = fx * nx + fz * nz;
     if (fn * S.v > 0) {
       const imp = Math.abs(fn * S.v);
@@ -92,11 +98,11 @@ function update(dt) {
   if (R.excluded) return;
   const s = ci / T.N;
   if (near.d < HW + RUNOFF) {
-    if (R.cp < 3 && s > 0.25 * (R.cp + 1) && s < 0.25 * (R.cp + 1) + 0.15) R.cp++;
+    if (R.cp < 3 && s > 0.25 * (R.cp + 1) && s < 0.25 * (R.cp + 1) + 0.24) R.cp++;
     if (R.cp >= 3 && R.prevS > 0.85 && s < 0.15) crossLine();
     R.prevS = s;
   }
-  const off = near.d > HW + 0.6;
+  const off = near.d > HW + 0.6 && pit.d > PIT_WALL;      // anywhere inside the pit walls counts as on the circuit
   if (off && !R.wasOff && R.started) {
     R.offs++; R.invalid = true;
     if (R.offs % 3 === 0) {
@@ -107,7 +113,7 @@ function update(dt) {
   }
   R.wasOff = off;
   const dot = Math.cos(S.h) * T.tx[ci] + Math.sin(S.h) * T.tz[ci];
-  R.wrong = (S.v > 3 && dot < -0.4) ? R.wrong + dt : 0;
+  R.wrong = (S.v > 3 && dot < -0.4 && !S.inPit) ? R.wrong + dt : 0;
   if (R.wrong > 1.5) { say('RULE 2 · WRONG WAY – the course runs clockwise', '#ff6b5e', 1); R.wrong = 1; }
 }
 function crossLine() {

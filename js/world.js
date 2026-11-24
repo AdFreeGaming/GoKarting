@@ -108,7 +108,7 @@ const flood = { lights: [], lampMat: new THREE.MeshBasicMaterial({ color: 0x8a8f
     if (trackDist(x, z) < HW + RUNOFF + 1.4 || spots.some(p => Math.hypot(p[0] - x, p[1] - z) < 30)) return;
     spots.push([x, z, Math.atan2(T.tx[i] * side, T.tz[i] * side)]);
   };
-  for (const T of [TRACKS.full, TRACKS.short]) for (let i = 0, q = 0; i < T.N; i += 20, q++) { tryPole(T, i, q % 2 ? 1 : -1); }
+  for (const T of TRACK_KEYS.map(k => TRACKS[k])) for (let i = 0, q = 0; i < T.N; i += 20, q++) { tryPole(T, i, q % 2 ? 1 : -1); }
   const poleM = M.lam(0xa3abb2, 0.5), poleG = new THREE.CylinderGeometry(0.08, 0.16, 12, 12), armG = new THREE.BoxGeometry(2.2, 0.1, 0.1), headG = new THREE.BoxGeometry(0.45, 0.32, 0.2);
   for (const p of spots.slice(0, 16)) {
     const g = new THREE.Group(); g.position.set(p[0], 0, p[1]); g.rotation.y = p[2];

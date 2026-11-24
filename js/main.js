@@ -60,7 +60,7 @@ addEventListener('keydown', e => {
   if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;      // typing a save label, not driving
   if (e.code.startsWith('Arrow') || e.code === 'Space') e.preventDefault();
   if (e.repeat) return; keys[e.code] = true;
-  if (menu.style.display !== 'none') { envKey(e.code); if (e.code === 'Digit1') choose('full'); if (e.code === 'Digit2') choose('short'); if (e.code === 'KeyT' || e.code === 'Escape') closeMenu(); return; }
+  if (menu.style.display !== 'none') { envKey(e.code); const pickKey = TRACK_KEYS[['Digit1', 'Digit2', 'Digit3'].indexOf(e.code)]; if (pickKey) choose(pickKey); if (e.code === 'KeyT' || e.code === 'Escape') closeMenu(); return; }
   if (e.code === 'KeyR' && !R.excluded) { resetKart(S.near.i); say('Reset to track', '#fff', 1.2); }
   if (e.code === 'KeyC') head.my = head.mp = 0;
   if (e.code === 'KeyM') { if (e.shiftKey) { openMenu(); return; } AU.muted = !AU.muted; }      // Shift+M: back to the start menu
@@ -90,8 +90,8 @@ addEventListener('mousemove', e => {
   head.my =clamp(head.my - e.movementX * 0.0024, -2.1, 2.1); head.mp = clamp(head.mp - e.movementY * 0.0024, -0.8, 0.6);
 });
 for (const b of document.querySelectorAll('.card')) b.addEventListener('click', () => choose(b.dataset.k));
-for (const key of ['full', 'short']) drawTrack($('pv_' + key).getContext('2d'), TRACKS[key], 420, 300, '#f2f2f2', 9, TRACKS[key === 'full' ? 'short' : 'full']);
-initBreakout(() => { for (const key of ['full', 'short']) $('d_' + key).textContent = Math.round(TRACKS[key].L) + ' m · break-out ' + breakoutFor(key).toFixed(2) + ' s · press ' + (key === 'full' ? 1 : 2); });
+for (const key of TRACK_KEYS) drawTrack($('pv_' + key).getContext('2d'), TRACKS[key], 420, 300, '#f2f2f2', 9, true);
+initBreakout(() => { for (const key of TRACK_KEYS) $('d_' + key).textContent = Math.round(TRACKS[key].L) + ' m · break-out ' + breakoutFor(key).toFixed(2) + ' s · press ' + (TRACK_KEYS.indexOf(key) + 1); });
 
 function envKey(code) {
   if (code === 'BracketLeft') ENV.hour = Math.max(8, ENV.hour - 0.25); else if (code === 'BracketRight') ENV.hour = Math.min(19, ENV.hour + 0.25);

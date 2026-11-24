@@ -10,8 +10,15 @@ const LAYOUTS = {
             [625,28],[665,45],[700,80],[740,125],[775,175],[798,225],[797,265],[775,295],[735,322],[690,352],
             [640,395],[600,430],[560,470]] },
   short: { name: 'Short Circuit', mid: [[640,236],[672,248],[690,272],[686,298],[662,312],[625,316],[600,333],
-            [593,362],[597,388],[598,412],[580,445],[550,478]] }
+            [593,362],[597,388],[598,412],[580,445],[550,478]] },
+  // development_assets/Track/Track_config3.png: the full circuit's top loop, returning through the short circuit's infield esses
+  long:  { name: 'Long Circuit',  mid: [[612,230],[628,212],[632,188],[625,160],[610,132],[590,100],[578,65],[590,38],
+            [625,28],[665,45],[700,80],[740,125],[775,175],[798,225],[797,265],[778,290],[745,304],[705,310],[662,312],
+            [625,316],[600,333],[593,362],[597,388],[598,412],[580,445],[550,478]] }
 };
+// pit lane (the green strip in Track_config3.png): leaves the track on the left before the last infield section and rejoins before the line
+const PIT_PX = [[165,742],[156,712],[146,680],[139,650],[140,615],[148,580],[152,555],[156,525],[160,490],[166,450],[172,410],[178,370],
+  [184,345],[198,316],[218,294],[244,268]];
 
 function rawPath(px) {
   const curve = new THREE.CatmullRomCurve3(px.map(p => new THREE.Vector3(p[0] - IMG_C[0], 0, p[1] - IMG_C[1])), true, 'centripetal');
@@ -52,6 +59,16 @@ const TRACKS = {};
   for (const key in LAYOUTS) { TRACKS[key] = finalize(raw[key], K); TRACKS[key].key = key; TRACKS[key].name = LAYOUTS[key].name; }
   TRACKS.scale = K;
 }
+// open path sampled about every metre, in the same form as a track (x, z, tangents) so nearest() and ribbon() work on it
+function openPath(px, k) {
+  const curve = new THREE.CatmullRomCurve3(px.map(p => new THREE.Vector3((p[0] - IMG_C[0]) * k, 0, (p[1] - IMG_C[1]) * k)), false, 'centripetal');
+  const L = curve.getLength(), n = Math.round(L), pts = curve.getSpacedPoints(n), N = n + 1;
+  const P = { N, L, ds: L / n, x: new Float32Array(N), z: new Float32Array(N), tx: new Float32Array(N), tz: new Float32Array(N) };
+  for (let i = 0; i < N; i++) { P.x[i] = pts[i].x; P.z[i] = pts[i].z; }
+  for (let i = 0; i < N; i++) { const a = Math.max(0, i - 1), b = Math.min(N - 1, i + 1), dx = P.x[b] - P.x[a], dz = P.z[b] - P.z[a], l = Math.hypot(dx, dz); P.tx[i] = dx / l; P.tz[i] = dz / l; }
+  return P;
+}
+const PIT = openPath(PIT_PX, TRACKS.scale);
 const px2w = (px, py) => [(px - IMG_C[0]) * TRACKS.scale, (py - IMG_C[1]) * TRACKS.scale];
 
 function nearest(T, x, z) {
@@ -59,4 +76,6 @@ function nearest(T, x, z) {
   for (let i = 0; i < T.N; i++) { const dx = T.x[i] - x, dz = T.z[i] - z, d = dx * dx + dz * dz; if (d < bd) { bd = d; bi = i; } }
   return { i: bi, d: Math.sqrt(bd) };
 }
-const trackDist = (x, z) => Math.min(nearest(TRACKS.full, x, z).d, nearest(TRACKS.short, x, z).d);
+const TRACK_KEYS = Object.keys(LAYOUTS);
+// clearance from any layout or the pit lane (the pit lane is narrower, so it is padded to compare like a track)
+const trackDist = (x, z) => Math.min(nearest(PIT, x, z).d + (HW + RUNOFF - PIT_WALL), ...TRACK_KEYS.map(k => nearest(TRACKS[k], x, z).d));

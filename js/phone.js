@@ -149,8 +149,8 @@ if (portrait.addEventListener) portrait.addEventListener('change', onTurn); else
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('gesturestart', e => e.preventDefault());      // iOS pinch zoom
 
-for (const key of ['full', 'short']) drawTrack($('pv_' + key).getContext('2d'), TRACKS[key], 420, 300, '#f2f2f2', 9, TRACKS[key === 'full' ? 'short' : 'full']);
-initBreakout(() => { for (const key of ['full', 'short']) $('d_' + key).textContent = Math.round(TRACKS[key].L) + ' m · break-out ' + breakoutFor(key).toFixed(2) + ' s'; });
+for (const key of TRACK_KEYS) drawTrack($('pv_' + key).getContext('2d'), TRACKS[key], 420, 300, '#f2f2f2', 9, true);
+initBreakout(() => { for (const key of TRACK_KEYS) $('d_' + key).textContent = Math.round(TRACKS[key].L) + ' m · break-out ' + breakoutFor(key).toFixed(2) + ' s'; });
 pickTrack(pick);
 MONTHS.forEach((m, i) => { const o = document.createElement('option'); o.value = i; o.textContent = m; $('month').appendChild(o); });
 $('month').addEventListener('change', e => { ENV.month = +e.target.value; ENV.manual = true; applySun(); });

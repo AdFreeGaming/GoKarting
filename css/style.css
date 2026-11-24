@@ -28,7 +28,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:#101418;color:#fff;
 #menu h1 span{color:#ff8a2b}
 #menu p.sub{margin:0 0 18px;color:#9fb0c0}
 .cards{display:flex;gap:16px;flex-wrap:wrap}
-.card{flex:1 1 300px;background:#131b24;border:2px solid #ffffff1c;border-radius:12px;padding:14px;cursor:pointer;
+.card{flex:1 1 220px;background:#131b24;border:2px solid #ffffff1c;border-radius:12px;padding:14px;cursor:pointer;
   transition:border-color .15s,transform .15s;text-align:left;color:#fff;font:inherit}
 .card:hover,.card:focus{border-color:#ff8a2b;transform:translateY(-2px);outline:none}
 .card canvas{width:100%;height:auto;background:#2c4a2a;border-radius:8px;display:block}
